@@ -106,11 +106,24 @@ class Shape(object):
                 self.drawVertex(vrtx_path, i)
             if self.isClosed():
                 line_path.lineTo(self.points[0])
-
+                
             painter.drawPath(line_path)
             painter.drawPath(vrtx_path)
             painter.fillPath(vrtx_path, self.vertex_fill_color)
 
+            # Draw center of shape
+            # print('shape: ', len(self.points),'#',self.points)
+            line_path = QPainterPath()
+            line_path.moveTo(QPointF((self.points[0].x() + self.points[1].x()) // 2, self.points[1].y()))
+            line_path.lineTo(QPointF((self.points[0].x() + self.points[1].x()) // 2, self.points[2].y()))
+            painter.drawPath(line_path)
+            
+            line_path = QPainterPath()
+            line_path.moveTo(QPointF(self.points[0].x(), (self.points[1].y() + self.points[2].y()) // 2))
+            line_path.lineTo(QPointF(self.points[1].x(), (self.points[1].y() + self.points[2].y()) // 2))
+            painter.drawPath(line_path)
+            
+            
             # Draw text at the top-left
             if self.paintLabel:
                 min_x = sys.maxsize
