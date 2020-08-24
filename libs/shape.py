@@ -89,8 +89,19 @@ class Shape(object):
             color = self.select_line_color if self.selected else self.line_color
             pen = QPen(color)
             # Try using integer sizes for smoother drawing(?)
-            pen.setWidth(max(1, int(round(2.0 / self.scale))))
+            pen.setWidth(max(1, int(round(4.0 / self.scale))))
             painter.setPen(pen)
+
+            # Draw center of shape
+            # line_path = QPainterPath()
+            # line_path.moveTo(QPointF((self.points[0].x() + self.points[1].x()) // 2, self.points[1].y()))
+            # line_path.lineTo(QPointF((self.points[0].x() + self.points[1].x()) // 2, self.points[2].y()))
+            # painter.drawPath(line_path)
+            
+            # line_path = QPainterPath()
+            # line_path.moveTo(QPointF(self.points[0].x(), (self.points[1].y() + self.points[2].y()) // 2))
+            # line_path.lineTo(QPointF(self.points[1].x(), (self.points[1].y() + self.points[2].y()) // 2))
+            # painter.drawPath(line_path)
 
             line_path = QPainterPath()
             vrtx_path = QPainterPath()
@@ -110,20 +121,12 @@ class Shape(object):
             painter.drawPath(line_path)
             painter.drawPath(vrtx_path)
             painter.fillPath(vrtx_path, self.vertex_fill_color)
-
-            # Draw center of shape
-            # print('shape: ', len(self.points),'#',self.points)
-            line_path = QPainterPath()
-            line_path.moveTo(QPointF((self.points[0].x() + self.points[1].x()) // 2, self.points[1].y()))
-            line_path.lineTo(QPointF((self.points[0].x() + self.points[1].x()) // 2, self.points[2].y()))
-            painter.drawPath(line_path)
             
-            line_path = QPainterPath()
-            line_path.moveTo(QPointF(self.points[0].x(), (self.points[1].y() + self.points[2].y()) // 2))
-            line_path.lineTo(QPointF(self.points[1].x(), (self.points[1].y() + self.points[2].y()) // 2))
-            painter.drawPath(line_path)
-            
-            
+            color = self.hvertex_fill_color
+            pen = QPen(color)
+            # Try using integer sizes for smoother drawing(?)
+            pen.setWidth(max(1, int(round(2.0 / self.scale))))
+            painter.setPen(pen)
             # Draw text at the top-left
             if self.paintLabel:
                 min_x = sys.maxsize
@@ -133,15 +136,25 @@ class Shape(object):
                     min_y = min(min_y, point.y())
                 if min_x != sys.maxsize and min_y != sys.maxsize:
                     font = QFont()
-                    font.setPointSize(8)
+                    FONT_SIZE = 4
+                    font.setPointSize(FONT_SIZE * 2)
                     font.setBold(True)
+                    width = painter.fontMetrics().boundingRect(self.label).width()
+                    min_x += (self.points[2].x() - self.points[0].x() - width) // 2
+                    min_y += (self.points[2].y() - self.points[1].y() + FONT_SIZE*2) // 2
                     painter.setFont(font)
                     if(self.label == None):
                         self.label = ""
                     if(min_y < MIN_Y_LABEL):
                         min_y += MIN_Y_LABEL
+                    contrast_path = QPainterPath()
+                    contrast_path.moveTo(min_x-FONT_SIZE, min_y-FONT_SIZE*4)
+                    contrast_path.lineTo(min_x+width+FONT_SIZE, min_y-FONT_SIZE*4)
+                    contrast_path.lineTo(min_x+width+FONT_SIZE, min_y+FONT_SIZE)
+                    contrast_path.lineTo(min_x-FONT_SIZE, min_y+FONT_SIZE)
+                    painter.fillPath(contrast_path, self.select_line_color)
                     painter.drawText(min_x, min_y, self.label)
-
+            
             if self.fill:
                 color = self.select_fill_color if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
