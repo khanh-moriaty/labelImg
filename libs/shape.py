@@ -10,6 +10,8 @@ except ImportError:
     from PyQt4.QtCore import *
 
 from libs.utils import distance
+from math import sqrt
+import numpy as np
 import sys
 
 DEFAULT_LINE_COLOR = QColor(0, 255, 0, 128)
@@ -136,21 +138,23 @@ class Shape(object):
                     min_y = min(min_y, point.y())
                 if min_x != sys.maxsize and min_y != sys.maxsize:
                     font = QFont()
-                    FONT_SIZE = 4
+                    width = self.points[2].x() - self.points[0].x()
+                    height = self.points[2].y() - self.points[0].y()
+                    FONT_SIZE = np.clip(int(sqrt(width*height)) // 20, 3, 15)
                     font.setPointSize(FONT_SIZE * 2)
                     font.setBold(True)
-                    width = painter.fontMetrics().boundingRect(self.label).width()
-                    min_x += (self.points[2].x() - self.points[0].x() - width) // 2
-                    min_y += (self.points[2].y() - self.points[1].y() + FONT_SIZE*2) // 2
                     painter.setFont(font)
+                    text_width = painter.fontMetrics().boundingRect(self.label).width()
+                    min_x += (width - text_width) // 2
+                    min_y += (height + FONT_SIZE*2) // 2
                     if(self.label == None):
                         self.label = ""
                     if(min_y < MIN_Y_LABEL):
                         min_y += MIN_Y_LABEL
                     contrast_path = QPainterPath()
-                    contrast_path.moveTo(min_x-FONT_SIZE, min_y-FONT_SIZE*4)
-                    contrast_path.lineTo(min_x+width+FONT_SIZE, min_y-FONT_SIZE*4)
-                    contrast_path.lineTo(min_x+width+FONT_SIZE, min_y+FONT_SIZE)
+                    contrast_path.moveTo(min_x-FONT_SIZE, min_y-FONT_SIZE*3)
+                    contrast_path.lineTo(min_x+text_width+FONT_SIZE, min_y-FONT_SIZE*3)
+                    contrast_path.lineTo(min_x+text_width+FONT_SIZE, min_y+FONT_SIZE)
                     contrast_path.lineTo(min_x-FONT_SIZE, min_y+FONT_SIZE)
                     painter.fillPath(contrast_path, self.select_line_color)
                     painter.drawText(min_x, min_y, self.label)
