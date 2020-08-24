@@ -20,6 +20,8 @@ DEFAULT_SELECT_LINE_COLOR = QColor(255, 255, 255)
 DEFAULT_SELECT_FILL_COLOR = QColor(0, 128, 255, 155)
 DEFAULT_VERTEX_FILL_COLOR = QColor(0, 255, 0, 255)
 DEFAULT_HVERTEX_FILL_COLOR = QColor(255, 0, 0)
+DEFAULT_TEXT_COLOR = QColor(255, 0, 0, 150)
+DEFAULT_TEXT_BG_COLOR = QColor(255, 255, 255, 100)
 MIN_Y_LABEL = 10
 
 
@@ -36,6 +38,8 @@ class Shape(object):
     select_fill_color = DEFAULT_SELECT_FILL_COLOR
     vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
     hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
+    text_color = DEFAULT_TEXT_COLOR
+    text_bg_color = DEFAULT_TEXT_BG_COLOR
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -124,7 +128,7 @@ class Shape(object):
             painter.drawPath(vrtx_path)
             painter.fillPath(vrtx_path, self.vertex_fill_color)
             
-            color = self.hvertex_fill_color
+            color = self.text_color
             pen = QPen(color)
             # Try using integer sizes for smoother drawing(?)
             pen.setWidth(max(1, int(round(2.0 / self.scale))))
@@ -156,7 +160,7 @@ class Shape(object):
                     contrast_path.lineTo(min_x+text_width+FONT_SIZE, min_y-FONT_SIZE*3)
                     contrast_path.lineTo(min_x+text_width+FONT_SIZE, min_y+FONT_SIZE)
                     contrast_path.lineTo(min_x-FONT_SIZE, min_y+FONT_SIZE)
-                    painter.fillPath(contrast_path, self.select_line_color)
+                    painter.fillPath(contrast_path, self.text_bg_color)
                     painter.drawText(min_x, min_y, self.label)
             
             if self.fill:
