@@ -10,7 +10,7 @@ except ImportError:
     from PyQt4.QtCore import *
 
 from libs.utils import distance
-from math import sqrt
+from math import sqrt,
 import numpy as np
 import sys
 
@@ -142,8 +142,8 @@ class Shape(object):
                     min_y = min(min_y, point.y())
                 if min_x != sys.maxsize and min_y != sys.maxsize:
                     font = QFont()
-                    width = self.points[2].x() - self.points[0].x()
-                    height = self.points[2].y() - self.points[0].y()
+                    width = abs(self.points[2].x() - self.points[0].x())
+                    height = abs(self.points[2].y() - self.points[0].y())
                     FONT_SIZE = np.clip(int(sqrt(width*height)) // 20, 3, 15)
                     font.setPointSize(FONT_SIZE * 2)
                     font.setBold(True)
