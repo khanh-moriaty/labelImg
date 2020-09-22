@@ -10,7 +10,7 @@ except ImportError:
     from PyQt4.QtCore import *
 
 from libs.utils import distance
-from math import sqrt,
+from math import sqrt
 import numpy as np
 import sys
 
