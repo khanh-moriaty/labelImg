@@ -10,7 +10,7 @@ except ImportError:
 #from PyQt4.QtOpenGL import *
 
 from libs.shape import Shape
-from libs.utils import distance
+from libs.utils import distance, generateColorByText
 
 CURSOR_DEFAULT = Qt.ArrowCursor
 CURSOR_POINT = Qt.PointingHandCursor
@@ -32,9 +32,11 @@ class Canvas(QWidget):
     CREATE, EDIT = list(range(2))
 
     epsilon = 11.0
+    epsilon = 2.0
 
     def __init__(self, *args, **kwargs):
         super(Canvas, self).__init__(*args, **kwargs)
+        self.mainWindow = kwargs['parent']
         # Initialise local state.
         self.mode = self.EDIT
         self.shapes = []
@@ -300,6 +302,16 @@ class Canvas(QWidget):
         return self.drawing() and self.current and len(self.current) > 2
 
     def mouseDoubleClickEvent(self, ev):
+        pos = self.transformPos(ev.pos())
+
+        item = self.mainWindow.currentItem()
+        if self.editing() and self.selectedShape:
+            text = self.mainWindow.labelDialog.popUp(item.text())
+            if text is not None:
+                item.setText(text)
+                item.setBackground(generateColorByText(text))
+                self.mainWindow.setDirty()
+                self.mainWindow.updateComboBox()
         # We need at least 4 points here, since the mousePress handler
         # adds an extra one before this handler is called.
         if self.canCloseShape() and len(self.current) > 3:

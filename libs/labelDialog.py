@@ -20,6 +20,7 @@ class LabelDialog(QDialog):
         self.edit.setText(text)
         self.edit.setValidator(labelValidator())
         self.edit.editingFinished.connect(self.postProcess)
+        self.edit.textEdited.connect(self.complete)
 
         model = QStringListModel()
         model.setStringList(listItem)
@@ -46,18 +47,19 @@ class LabelDialog(QDialog):
 
         self.setLayout(layout)
 
+    def complete(self, s):
+        if s.endswith(' '):
+            self.postProcess()
+            self.accept()
+
     def validate(self):
-        try:
-            if self.edit.text().trimmed():
-                self.accept()
-        except AttributeError:
-            # PyQt5: AttributeError: 'str' object has no attribute 'trimmed'
-            if self.edit.text().strip():
-                self.accept()
+        if self.edit.text().strip():
+            self.accept()
 
     def postProcess(self):
         try:
-            self.edit.setText(self.edit.text().trimmed())
+            self.edit.setText(self.edit.text().strip())
+            print('pp')
         except AttributeError:
             # PyQt5: AttributeError: 'str' object has no attribute 'trimmed'
             self.edit.setText(self.edit.text())

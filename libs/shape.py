@@ -66,7 +66,7 @@ class Shape(object):
             # with an object attribute. Currently this
             # is used for drawing the pending line a different color.
             self.line_color = line_color
-
+        
     def close(self):
         self._closed = True
 
@@ -93,9 +93,10 @@ class Shape(object):
     def paint(self, painter):
         if self.points:
             color = self.select_line_color if self.selected else self.line_color
+            color.setAlpha(255)
             pen = QPen(color)
             # Try using integer sizes for smoother drawing(?)
-            pen.setWidth(max(1, int(round(4.0 / self.scale))))
+            pen.setWidth(max(1, int(round(1.0 / self.scale))))
             painter.setPen(pen)
 
             # Draw center of shape
@@ -120,7 +121,7 @@ class Shape(object):
 
             for i, p in enumerate(self.points):
                 line_path.lineTo(p)
-                self.drawVertex(vrtx_path, i)
+                # self.drawVertex(vrtx_path, i)
             if self.isClosed():
                 line_path.lineTo(self.points[0])
                 
